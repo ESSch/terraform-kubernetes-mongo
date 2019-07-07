@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  master:
+    image: mongo:4.0.1
+    command: mongod --replSet rs1
+    ports:
+      - "27017:27017"
+    restart: always
+  slave:
+    image: mongo:4.0.1
+    command: mongod --replSet rs1
+    ports:
+      - "27018:27017"
+    restart: always
