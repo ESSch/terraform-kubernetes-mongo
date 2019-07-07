@@ -1,5 +1,5 @@
-[![Docker Pulls]
-[![Build Status]
+[![Docker Pulls]]
+[![Build Status]]
 
 ### Uses
 ```bash
