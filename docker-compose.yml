@@ -1,24 +1,36 @@
-version: "3"
+version: "2.1"
 
 services:
   master:
     image: mongo:4.0.1
-    command: mongod --config /etc/mongo_conf/mongo.cnf
-    volumes:
-      - ./mongo_conf:/etc/mongo_conf
+    command: mongod --replSet rs1 # --config /etc/mongo_conf/mongo.cnf
+#    volumes:
+#      - ./mongo_conf:/etc/mongo_conf
     ports:
       - "27017:27017"
     restart: always
+    healthcheck:
+      test: ["CMD", "mongo"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
   slave:
     image: mongo:4.0.1
-    command: mongod
+    command: mongod --replSet rs1
     ports:
       - "27018:27017"
     restart: always
-#  conf:
-#    image: mongo:4.0.1
-#    command: mongo mongodb://master:27017 --eval="rs.initiate(); rs.add('slave');"
-#    depends_on:
-#      - master
-#      - slave
+    healthcheck:
+      test: ["CMD", "mongo"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+  conf:
+    image: mongo:4.0.1
+    command: mongo mongodb://master:27017 --eval="rs.initiate(); rs.add('slave');";
+    depends_on:
+      master:
+        condition: service_healthy
+      slave:
+        condition: service_healthy
 
