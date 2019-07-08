@@ -1,4 +1,4 @@
-version: "2.1"
+version: "3.0"
 
 services:
   master:
@@ -6,7 +6,6 @@ services:
     command: mongod --replSet rs1
     volumes:
       - ./mongo_data:/data/db/
-#      - ./mongo_conf:/etc/mongo_conf
     ports:
       - "27017:27017"
     restart: on-failure
@@ -32,10 +31,8 @@ services:
       - ./scripts:/scripts
     command: bash /scripts/conf.sh
     depends_on:
-      master:
-        condition: service_healthy
-      slave:
-        condition: service_healthy
+      - master
+      - slave
   backup:
     image: mongo:4.0.1
 
