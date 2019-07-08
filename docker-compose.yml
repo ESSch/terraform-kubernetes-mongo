@@ -3,7 +3,7 @@ version: "2.1"
 services:
   master:
     image: mongo:4.0.1
-    command: mongod --replSet rs1 # --config /etc/mongo_conf/mongo.cnf
+    command: mongod --replSet rs1 # --config /etc/mongo_conf/mongo.cnf --dbpath /var/lib/mongodb
 #    volumes:
 #      - ./mongo_conf:/etc/mongo_conf
     ports:
@@ -27,7 +27,9 @@ services:
       retries: 5
   conf:
     image: mongo:4.0.1
-    command: mongo mongodb://master:27017 --eval="rs.initiate(); rs.add('slave');";
+    volumes:
+      - ./scripts:/scripts
+    command: bash /scripts/conf.sh
     depends_on:
       master:
         condition: service_healthy
