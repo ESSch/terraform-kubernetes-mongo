@@ -3,12 +3,13 @@ version: "2.1"
 services:
   master:
     image: mongo:4.0.1
-    command: mongod --replSet rs1 # --config /etc/mongo_conf/mongo.cnf --dbpath /var/lib/mongodb
-#    volumes:
+    command: mongod --replSet rs1
+    volumes:
+      - ./mongo_data:/data/db/
 #      - ./mongo_conf:/etc/mongo_conf
     ports:
       - "27017:27017"
-    restart: always
+    restart: on-failure
     healthcheck:
       test: ["CMD", "mongo"]
       interval: 2s
@@ -19,7 +20,7 @@ services:
     command: mongod --replSet rs1
     ports:
       - "27018:27017"
-    restart: always
+    restart: on-failure
     healthcheck:
       test: ["CMD", "mongo"]
       interval: 2s
@@ -35,4 +36,6 @@ services:
         condition: service_healthy
       slave:
         condition: service_healthy
+  backup:
+    image: mongo:4.0.1
 
